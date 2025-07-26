@@ -33,15 +33,6 @@ const addProduct = async (req, res) => {
             });
         }
 
-        // Check if SKU already exists
-        const existingProduct = await Product.findOne({ sku: productData.sku.toUpperCase() });
-        if (existingProduct) {
-            return res.status(400).json({
-                success: false,
-                message: 'Product with this SKU already exists'
-            });
-        }
-
         // Create product
         const product = new Product(productData);
         await product.save();
@@ -55,13 +46,6 @@ const addProduct = async (req, res) => {
 
     } catch (error) {
         console.error('Add product error:', error);
-        
-        if (error.code === 11000) {
-            return res.status(400).json({
-                success: false,
-                message: 'Product with this SKU already exists'
-            });
-        }
 
         res.status(500).json({
             success: false,
@@ -117,7 +101,6 @@ const getProducts = async (req, res) => {
         const totalPages = Math.ceil(totalCount / validLimit);
         
         res.status(200).json({
-            success: true,
             data: products,
             pagination: {
                 currentPage: validPage,
